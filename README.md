@@ -1,5 +1,5 @@
 # trailer-service
-The trailer service is a restful service build on Spring boot running on a Tomcat server. 
+The trailer service is a restful service built on Spring boot running on a Tomcat server. 
 
 ## Installation
 1. Clone the repo from github: `git clone https://github.com/claesstrale/trailer-service.git`
