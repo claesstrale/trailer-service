@@ -20,10 +20,13 @@ public class TrailerController {
     @Autowired
     private DataFetcherRepository df;
 
+    /**
+     * /trailer request handler. Requires a link as parameter
+     * @param link Required, Viaplay movie item link
+     * @return JSON object containing a trailer link to the requested movie
+     */
     @RequestMapping(path = "/trailer", method = RequestMethod.GET)
     public TrailerLink trailer(@RequestParam(value = "link")String link){
-//        DataFetcher df = new DataFetcher();
-
         log.info(marker + "Get ready for fetching data");
         String title = df.getResourceLink(link);
         log.info(marker + "Data fetched");

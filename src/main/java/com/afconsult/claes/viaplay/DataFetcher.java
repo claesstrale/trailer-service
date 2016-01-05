@@ -11,6 +11,10 @@ import java.util.regex.Pattern;
 
 /**
  * Created by Claes on 2015-12-18.
+ *
+ * The DataFetcher first fetches movie info from viaplay and extracts the IMDB ID.
+ * After that it fetches trailer data about that movie using the IMDB ID and extracts the trailer URL and returns it.
+ * The getResourceLink method is cached (currently in RAM) so external data suppliers will not be bothered too much. =)
  */
 @Component
 public class DataFetcher implements DataFetcherRepository {
@@ -18,10 +22,13 @@ public class DataFetcher implements DataFetcherRepository {
     private final String trailerUrlPattern = "\\/([\\/\\w\\.]*)";
     private final String trailerAddictUrl = "http://api.traileraddict.com/?imdb=";
 
+    /**
+     * Fetches data from data suppliers and returns a trailer URL
+     * @param url  Viaplay movie item URL.
+     * @return Returns trailer URL
+     */
     @Cacheable("resourceLink")
     public String getResourceLink(String url){
-        // Verify in db if link is already fetched.
-
         // If not, fetch data from resource
         RestTemplate restTemplate = new RestTemplate();
         MovieItem item = restTemplate.getForObject(url, MovieItem.class);
@@ -33,8 +40,7 @@ public class DataFetcher implements DataFetcherRepository {
         imdbId = imdbId.replaceAll("\\D+","");
 
         // get trailer data
-        RestTemplate restTemplate2 = new RestTemplate();
-        TrailerItem tItem = restTemplate2.getForObject(trailerAddictUrl + imdbId, TrailerItem.class);
+        TrailerItem tItem = restTemplate.getForObject(trailerAddictUrl + imdbId, TrailerItem.class);
 
         // extract the trailer url
         Pattern urlPattern = Pattern.compile(trailerUrlPattern);
@@ -43,10 +49,6 @@ public class DataFetcher implements DataFetcherRepository {
         if(m.find()){
             trailerUrl = "http:" + m.group();
         }
-
-
-        // then get link using imdb id from trailer addict
-
 
         return trailerUrl;
     }
